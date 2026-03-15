@@ -1,0 +1,7 @@
+-- customers with same email but different names or addresses
+SELECT email, COUNT(*) AS record_count,
+       STRING_AGG(customer_name || ' (' || city || ')', ', ') AS details
+FROM customers
+GROUP BY email
+HAVING COUNT(DISTINCT customer_name) > 1
+    OR COUNT(DISTINCT city) > 1;

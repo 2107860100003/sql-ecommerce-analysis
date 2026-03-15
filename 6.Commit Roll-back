@@ -1,0 +1,52 @@
+
+-- 1. Customers Table
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- 2. Products Table
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) CHECK(price >= 0)
+);
+
+-- 3. Orders Table
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    product_id INT NOT NULL,
+    order_date DATE NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+-- Insert Cleaned Data using Transaction (COMMIT)
+BEGIN TRANSACTION;
+INSERT INTO customers (customer_id, customer_name, email)
+VALUES 
+(1, 'Rahul Sharma', 'rahul@gmail.com'),
+(2, 'Anita Verma', 'anita@gmail.com');
+
+INSERT INTO products (product_id, product_name, price)
+VALUES 
+(101, 'Laptop', 50000),
+(102, 'Headphones', 1500);
+
+INSERT INTO orders (order_id, customer_id, product_id, order_date)
+VALUES 
+(1001, 1, 101, '2026-03-16'),
+(1002, 2, 102, '2026-03-16');
+
+COMMIT;
+-- Error Scenario using Transaction (ROLLBACK)
+BEGIN TRANSACTION;
+-- First insert works
+INSERT INTO customers (customer_id, customer_name, email)
+VALUES (3, 'Rohit Singh', 'rohit@gmail.com');
+-- Duplicate primary key triggers error
+INSERT INTO customers (customer_id, customer_name, email)
+VALUES (3, 'Priya Singh', 'priya@gmail.com');
+-- Rollback all changes due to error
+ROLLBACK;

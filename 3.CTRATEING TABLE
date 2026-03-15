@@ -1,0 +1,41 @@
+-- Creating tables with appropriate data types, primary keys, foreign keys, and constraints (NOT NULL, CHECK, UNIQUE)
+--1 Customers Table
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(15) UNIQUE,
+    city VARCHAR(50) NOT NULL,
+    state VARCHAR(50) NOT NULL
+);
+--2 Sellers Table
+CREATE TABLE sellers (
+    seller_id INT PRIMARY KEY,
+    seller_name VARCHAR(100) NOT NULL,
+    city VARCHAR(50) NOT NULL,
+    state VARCHAR(50) NOT NULL
+);
+--3 Products Table
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(150) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL CHECK (price > 0)
+);
+--4 Orders Table
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT NOT NULL,
+    order_date DATE NOT NULL,
+    order_status VARCHAR(50) NOT NULL CHECK (order_status IN ('Pending', 'Shipped', 'Delivered', 'Cancelled')),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+--5 Payments Table
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY,
+    order_id INT NOT NULL,
+    payment_type VARCHAR(50) NOT NULL,
+    payment_value DECIMAL(10,2) NOT NULL CHECK (payment_value > 0),
+
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);

@@ -1,0 +1,11 @@
+SELECT 
+    o.order_id,
+    o.customer_id,
+    o.payment_value,
+    SUM(oi.quantity * oi.price) AS calculated_total,
+    o.payment_value - SUM(oi.quantity * oi.price) AS difference
+FROM orders o
+JOIN order_items oi
+    ON o.order_id = oi.order_id
+GROUP BY o.order_id, o.customer_id, o.payment_value
+HAVING o.payment_value <> SUM(oi.quantity * oi.price);

@@ -1,0 +1,68 @@
+--1 Coustmer Table
+CREATE TABLE Coustmer(
+    CoustmerID INT PRIMARY KEY,
+    CoustmerName VARCHAR(255) NOT NULL,
+    CoustmerEmail VARCHAR(255) NOT NULL UNIQUE,
+    CoustmerPhone VARCHAR(20)
+);
+--2 Sellers Table
+CREATE TABLE Sellers(
+    SellerID INT PRIMARY KEY,
+    SellerName VARCHAR(255) NOT NULL,
+    SellerEmail VARCHAR(255) NOT NULL UNIQUE,
+    SellerPhone VARCHAR(20)
+);
+--3 Products Table
+CREATE TABLE Products(  
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(255) NOT NULL,
+    Category VARCHAR(255) NOT NULL,
+    Price DECIMAL(10, 2) NOT NULL
+);
+--4 Orders Table
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    order_status VARCHAR(50),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+);
+--4 Order Items Table
+CREATE TABLE order_items (
+    order_item_id INT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    seller_id INT,
+    quantity INT,
+    price DECIMAL(10,2),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id),
+    FOREIGN KEY (seller_id) REFERENCES sellers(seller_id)
+);
+
+--5 Payments Table
+
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY,
+    order_id INT,
+    payment_type VARCHAR(50),
+    payment_value DECIMAL(10,2),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+--6 Reviews Table
+CREATE TABLE reviews (
+    review_id INT PRIMARY KEY,
+    order_id INT,
+    review_score INT,
+    review_comment TEXT,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+--7 Delivery Table
+
+CREATE TABLE delivery (
+    delivery_id INT PRIMARY KEY,
+    order_id INT,
+    delivery_status VARCHAR(50),
+    delivery_date DATE,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
