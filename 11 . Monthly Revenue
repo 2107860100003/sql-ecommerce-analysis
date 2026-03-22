@@ -1,0 +1,24 @@
+WITH monthly_data AS (
+    SELECT 
+        DATE_TRUNC('month', order_date) AS month,
+        SUM(revenue) AS monthly_revenue
+    FROM orders
+    GROUP BY 1
+)
+
+SELECT 
+    month,
+    monthly_revenue,
+    LAG(monthly_revenue) OVER (ORDER BY month) AS prev_month_revenue,
+    
+    CASE 
+        WHEN LAG(monthly_revenue) OVER (ORDER BY month) IS NULL THEN NULL
+        ELSE ROUND(
+            (monthly_revenue - LAG(monthly_revenue) OVER (ORDER BY month)) 
+            * 100.0 
+            / LAG(monthly_revenue) OVER (ORDER BY month),
+        2)
+    END AS mom_growth_pct
+
+FROM monthly_data
+ORDER BY month;

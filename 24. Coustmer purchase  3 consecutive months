@@ -1,0 +1,35 @@
+WITH monthly_orders AS (
+    SELECT 
+        customer_id,
+        DATE_FORMAT(order_date, '%Y-%m-01') AS order_month
+    FROM orders
+    GROUP BY customer_id, DATE_FORMAT(order_date, '%Y-%m-01')
+),
+
+ranked_months AS (
+    SELECT 
+        customer_id,
+        order_month,
+        ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_month) AS rn
+    FROM monthly_orders
+),
+
+grouped AS (
+    SELECT 
+        customer_id,
+        order_month,
+        DATE_SUB(order_month, INTERVAL rn MONTH) AS grp
+    FROM ranked_months
+),
+
+streaks AS (
+    SELECT 
+        customer_id,
+        COUNT(*) AS consecutive_months
+    FROM grouped
+    GROUP BY customer_id, grp
+)
+
+SELECT DISTINCT customer_id
+FROM streaks
+WHERE consecutive_months >= 3;

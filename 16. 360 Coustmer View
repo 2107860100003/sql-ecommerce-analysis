@@ -1,0 +1,47 @@
+SELECT 
+    c.customer_id,
+    c.customer_name,
+    c.email,
+    
+    -- Order level details
+    COUNT(DISTINCT o.order_id) AS total_orders,
+    SUM(o.order_total) AS total_spent,
+    MIN(o.order_date) AS first_order_date,
+    MAX(o.order_date) AS last_order_date,
+    
+    -- Product level insights
+    COUNT(DISTINCT oi.product_id) AS unique_products_bought,
+    SUM(oi.quantity) AS total_items_bought,
+    
+    -- Category / product insights
+    MAX(p.category) AS most_recent_category,
+    
+    -- Reviews insights
+    COUNT(r.review_id) AS total_reviews,
+    AVG(r.rating) AS avg_rating_given,
+    
+    -- Derived metrics
+    CASE 
+        WHEN SUM(o.order_total) >= 10000 THEN 'Gold'
+        WHEN SUM(o.order_total) >= 5000 THEN 'Silver'
+        ELSE 'Bronze'
+    END AS customer_segment
+
+FROM customers c
+
+LEFT JOIN orders o 
+    ON c.customer_id = o.customer_id
+
+LEFT JOIN order_items oi 
+    ON o.order_id = oi.order_id
+
+LEFT JOIN products p 
+    ON oi.product_id = p.product_id
+
+LEFT JOIN reviews r 
+    ON c.customer_id = r.customer_id
+
+GROUP BY 
+    c.customer_id,
+    c.customer_name,
+    c.email;

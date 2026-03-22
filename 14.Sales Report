@@ -1,0 +1,13 @@
+SELECT 
+    YEAR(order_date) AS year,
+    MONTH(order_date) AS month,
+    WEEK(order_date) AS week,
+    DATE(order_date) AS day,
+    SUM(revenue) AS total_revenue
+FROM sales
+GROUP BY ROLLUP (
+    YEAR(order_date),
+    MONTH(order_date),
+    WEEK(order_date),
+    DATE(order_date)
+);

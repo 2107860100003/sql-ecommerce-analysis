@@ -1,0 +1,14 @@
+SELECT 
+    o.order_id,
+    c.customer_id,
+    c.customer_name,
+    s.seller_id,
+    s.seller_name,
+    o.expected_delivery_date,
+    o.actual_delivery_date,
+    DATEDIFF(o.actual_delivery_date, o.expected_delivery_date) AS delay_days
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+JOIN sellers s ON o.seller_id = s.seller_id
+WHERE o.actual_delivery_date > o.expected_delivery_date
+ORDER BY delay_days DESC;

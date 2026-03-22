@@ -1,0 +1,16 @@
+SELECT category, product_id, total_revenue
+FROM (
+    SELECT 
+        p.category,
+        p.product_id,
+        SUM(oi.price * oi.quantity) AS total_revenue,
+        DENSE_RANK() OVER (
+            PARTITION BY p.category 
+            ORDER BY SUM(oi.price * oi.quantity) DESC
+        ) AS rank_num
+    FROM products p
+    JOIN order_items oi 
+        ON p.product_id = oi.product_id
+    GROUP BY p.category, p.product_id
+) ranked
+WHERE rank_num = 2;

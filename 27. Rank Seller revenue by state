@@ -1,0 +1,18 @@
+SELECT *
+FROM (
+    SELECT 
+        s.state,
+        s.seller_id,
+        SUM(o.revenue) AS total_revenue,
+        RANK() OVER (
+            PARTITION BY s.state 
+            ORDER BY SUM(o.revenue) DESC
+        ) AS rank_in_state
+    FROM sellers s
+    JOIN orders o 
+        ON s.seller_id = o.seller_id
+    GROUP BY 
+        s.state, 
+        s.seller_id
+) ranked
+WHERE rank_in_state <= 3;

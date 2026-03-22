@@ -1,0 +1,42 @@
+
+EXPLAIN ANALYZE
+SELECT customer_id, SUM(amount) AS total_amount
+FROM orders
+GROUP BY customer_id
+ORDER BY total_amount DESC;
+
+EXPLAIN ANALYZE
+SELECT *
+FROM orders
+WHERE status = 'pending'
+AND order_date > '2026-01-01';
+
+EXPLAIN ANALYZE
+SELECT *
+FROM orders
+WHERE customer_id = 123
+AND order_date BETWEEN '2026-01-01' AND '2026-03-01';
+
+CREATE INDEX idx_orders_customer_id ON orders(customer_id);
+
+CREATE INDEX idx_orders_status_date ON orders(status, order_date);
+
+CREATE INDEX idx_orders_customer_date ON orders(customer_id, order_date);
+
+EXPLAIN ANALYZE
+SELECT customer_id, SUM(amount) AS total_amount
+FROM orders
+GROUP BY customer_id
+ORDER BY total_amount DESC;
+
+EXPLAIN ANALYZE
+SELECT *
+FROM orders
+WHERE status = 'pending'
+AND order_date > '2026-01-01';
+
+EXPLAIN ANALYZE
+SELECT *
+FROM orders
+WHERE customer_id = 123
+AND order_date BETWEEN '2026-01-01' AND '2026-03-01';

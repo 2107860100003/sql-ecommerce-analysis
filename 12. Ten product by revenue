@@ -1,0 +1,14 @@
+SELECT *
+FROM (
+    SELECT 
+        category_id,
+        product_id,
+        SUM(revenue) AS total_revenue,
+        RANK() OVER (
+            PARTITION BY category_id
+            ORDER BY SUM(revenue) DESC
+        ) AS rank_in_category
+    FROM sales
+    GROUP BY category_id, product_id
+) t
+WHERE rank_in_category <= 10;

@@ -1,0 +1,27 @@
+WITH product_sales AS (
+    SELECT 
+        p.seller_id,
+        p.product_id,
+        p.product_name,
+        p.category_id,
+        SUM(oi.quantity * oi.price) AS total_revenue
+    FROM products p
+    JOIN order_items oi ON p.product_id = oi.product_id
+    GROUP BY p.seller_id, p.product_id, p.product_name, p.category_id
+),
+ranked_products AS (
+    SELECT 
+        ps.*,
+        ROW_NUMBER() OVER (PARTITION BY ps.seller_id, ps.category_id ORDER BY ps.total_revenue DESC) AS rn
+    FROM product_sales ps
+)
+SELECT 
+    s.seller_name,
+    c.category_name,
+    rp.product_name,
+    rp.total_revenue
+FROM ranked_products rp
+JOIN sellers s ON rp.seller_id = s.seller_id
+JOIN categories c ON rp.category_id = c.category_id
+WHERE rp.rn = 1
+ORDER BY s.seller_name, c.category_name;

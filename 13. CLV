@@ -1,0 +1,13 @@
+SELECT 
+    customer_id,
+    SUM(payment_value) AS clv,
+    
+    CASE 
+        WHEN SUM(payment_value) < 1000 THEN 'Bronze'
+        WHEN SUM(payment_value) BETWEEN 1000 AND 5000 THEN 'Silver'
+        ELSE 'Gold'
+    END AS customer_category
+
+FROM payments
+GROUP BY customer_id
+ORDER BY clv DESC;

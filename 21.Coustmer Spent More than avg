@@ -1,0 +1,26 @@
+SELECT 
+    c.customer_id,
+    c.customer_name,
+    c.state,
+    SUM(o.order_amount) AS total_spent
+FROM customers c
+JOIN orders o 
+    ON c.customer_id = o.customer_id
+GROUP BY 
+    c.customer_id, 
+    c.customer_name, 
+    c.state
+HAVING 
+    SUM(o.order_amount) > (
+        SELECT 
+            AVG(state_total)
+        FROM (
+            SELECT 
+                SUM(o2.order_amount) AS state_total
+            FROM customers c2
+            JOIN orders o2 
+                ON c2.customer_id = o2.customer_id
+            WHERE c2.state = c.state   -- correlated condition
+            GROUP BY c2.customer_id
+        ) AS state_avg
+    );

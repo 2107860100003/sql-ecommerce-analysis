@@ -1,0 +1,10 @@
+SELECT 
+    order_date,
+    COUNT(order_id) AS daily_orders,
+    AVG(COUNT(order_id)) OVER (
+        ORDER BY order_date
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ) AS moving_avg_7_days
+FROM orders
+GROUP BY order_date
+ORDER BY order_date;

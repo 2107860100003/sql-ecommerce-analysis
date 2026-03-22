@@ -1,0 +1,18 @@
+SELECT 
+    month,
+    category,
+    total_revenue
+FROM (
+    SELECT 
+        MONTH(order_date) AS month,
+        category,
+        SUM(revenue) AS total_revenue,
+        RANK() OVER (
+            PARTITION BY MONTH(order_date) 
+            ORDER BY SUM(revenue) DESC
+        ) AS rnk
+    FROM sales
+    GROUP BY MONTH(order_date), category
+) t
+WHERE rnk = 1
+ORDER BY month;

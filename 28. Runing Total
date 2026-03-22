@@ -1,0 +1,21 @@
+SELECT 
+    order_date,
+    daily_revenue,
+    
+    -- Running total
+    SUM(daily_revenue) OVER (ORDER BY order_date) AS running_total,
+    
+    -- Percentage of grand total
+    ROUND(
+        SUM(daily_revenue) OVER (ORDER BY order_date) * 100.0 
+        / SUM(daily_revenue) OVER (), 
+    2) AS pct_of_total
+
+FROM (
+    SELECT 
+        DATE(order_date) AS order_date,
+        SUM(revenue) AS daily_revenue
+    FROM sales
+    GROUP BY DATE(order_date)
+) t
+ORDER BY order_date;

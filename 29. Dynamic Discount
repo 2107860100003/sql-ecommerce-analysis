@@ -1,0 +1,39 @@
+DELIMITER $$
+
+CREATE PROCEDURE apply_dynamic_discount (
+    IN p_customer_id INT,
+    IN p_order_amount DECIMAL(10,2),
+    OUT p_discount DECIMAL(5,2),
+    OUT p_final_amount DECIMAL(10,2)
+)
+BEGIN
+    DECLARE order_count INT;
+
+    -- Get total previous orders of customer
+    SELECT COUNT(*) INTO order_count
+    FROM orders
+    WHERE customer_id = p_customer_id;
+
+    -- Apply discount rules (only one)
+    IF order_count = 0 THEN
+        -- New customer
+        SET p_discount = 15;
+
+    ELSEIF order_count >= 5 THEN
+        -- Loyal customer
+        SET p_discount = 5;
+
+    ELSEIF p_order_amount > 500 THEN
+        -- High value order
+        SET p_discount = 10;
+
+    ELSE
+        SET p_discount = 0;
+    END IF;
+
+    -- Calculate final amount
+    SET p_final_amount = p_order_amount - (p_order_amount * p_discount / 100);
+
+END $$
+
+DELIMITER ;
